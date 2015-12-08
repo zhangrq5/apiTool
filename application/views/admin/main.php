@@ -23,6 +23,7 @@
                 <table class="table table-bordered table-striped">
                   <thead>
                   <tr>
+                    <th>接口编号</th>
                     <th>接口名</th>
                     <th>路由名</th>
                     <th>所属类别</th>
@@ -37,6 +38,7 @@
                   ?>
                     <tr>
                       <td><?php echo $i->number;?></td>
+                      <td><?php echo $i->name;?></td>
                       <td><?php echo $i->url_name;?></td>
                       <td><?php echo $i->category_name;?></td>
                       <td><?php echo $i->user_name;?></td>

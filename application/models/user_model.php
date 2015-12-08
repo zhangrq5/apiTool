@@ -25,6 +25,7 @@ class User_Model extends CI_Model {
 	const STATE = 'state';
 	const LAST_LOGIN = 'last_login';
 	const CUSTOM_ID = 'custom_id';
+	const CUSTOM_URL = 'custom_url';
 
  	function __construct()
  	{

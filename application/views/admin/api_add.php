@@ -12,6 +12,7 @@
       </ul>
     </div>
   <div class="main-content">
+
       <?php if(isset($info)) {  ?>
           <div class="alert alert-<?php echo $info_type; ?>">
               <button type="button" class="close" data-dismiss="alert">×</button>
@@ -68,7 +69,8 @@
               <div class="form-group has-error" >
                 <div class="input-group">
                   <div class="input-group-addon" onclick="getParams()">参数获取地址前缀</div>
-                  <input type="text" class="form-control" name="prefix"  id = "prefix" value="http://test.api.popdr.gi4t.com">
+                  <input type="text" class="form-control" name="prefix"  id = "prefix" 
+                  value="<?php echo ($this->session->userdata('custom_url')==null)?"http://test.api.popdr.gi4t.com":$this->session->userdata('custom_url');?>">
                 </div>
               </div>
               <table class="table">
@@ -88,10 +90,25 @@
                 </tbody>
               </table>
             </div>
-            <div class="form-group">
-              <h5>返回结果</h5>
+            
+              <h5><button type="button" id = "test_result" class="btn btn-success" onclick="">返回结果</button></h5>
+              <div id="page-stats" class="panel-collapse panel-body collapse in" style = "display:none">
+                <div style="margin-left:20px;">
+                  <form action ="index.php?c=test&m=test_result" method="post">
+                    <div class="form-group has-error">
+                      <div class="input-group" id="api_number">
+                        <div class="input-group-addon">
+                          测试
+                        </div>
+                        <input type="text" class="form-control" name="number" id="num" placeholder="接口编号" required="required"  onblur="getNum()">
+                      </div>
+                    </div>
+                    <button class="btn btn-success" onclick = "show_input()">测试</button>
+                  </form>
+                </div>
+              </div>              
               <textarea name="res" rows="3" class="form-control" placeholder="返回结果"></textarea>
-            </div>
+            
             <div class="form-group">
               <h5>备注</h5>
               <textarea name="remark" rows="3" class="form-control" placeholder="备注"></textarea>
@@ -101,10 +118,15 @@
         </div>
       </div>
     </div>
-    <!--添加接口 end-->
   </div>
 
   <script>
+    $(document).ready(function(){
+      $("#test_result").click(function(){
+        $("#page-stats").toggle();
+      });
+  });
+
     function getParams(){
       var dr_url = document.getElementById("url_name").value;
       var prefix = document.getElementById("prefix").value;
@@ -174,8 +196,6 @@
                 }
             }
         });
-
-
     }
     function add(){
       console.log(document.getElementById('url'));
@@ -203,6 +223,7 @@
     function del(obj){
       $(obj).parents('tr').remove();
     }
+
   </script>
 
 </div>

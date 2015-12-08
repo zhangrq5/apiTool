@@ -92,7 +92,7 @@
                 <?php for($j=0;$j<$count;$j++){ ?>
                     <tr>
                         <td class="form-group has-error">
-                            <input type="text" class="form-control" name="p[name][]" placeholder="参数名" value="<?php echo $parameter['name'][$j]?>" required="required">
+                            <input type="text" class="form-control" name="p[name][]" placeholder="参数名" value="<?php echo $parameter['name'][$j];?>" required="required">
                         </td>
                         <td>
                             <?php
@@ -100,13 +100,13 @@
                             $selected[1] = ($parameter['type'][$j] == 'N') ? 'selected' : '';
                             ?>
                             <select class="form-control" name="p[type][]">
-                                <option value="Y" <?php echo $selected[0]?>>Y</option>
-                                <option value="N" <?php echo $selected[1]?>>N</option>
+                                <option value="Y" <?php echo $selected[0];?>>Y</option>
+                                <option value="N" <?php echo $selected[1];?>>N</option>
                             </select>
                         </td>
-                        <td><input type="text" class="form-control" name="p[default][]" placeholder="缺省值" value="<?php echo $parameter['default'][$j]?>"></td>
-                        <td><textarea name="p[des][]" rows="1" class="form-control" placeholder="描述"><?php echo $parameter['des'][$j]?></textarea></td>
-                        <td><textarea name="p[rules][]" rows="1" class="form-control" placeholder="校验规则"><?php echo $parameter['rules'][$j]?></textarea></td>
+                        <td><input type="text" class="form-control" name="p[default][]" placeholder="缺省值" value="<?php echo $parameter['default'][$j];?>"></td>
+                        <td><textarea name="p[des][]" rows="1" class="form-control" placeholder="描述"><?php echo $parameter['des'][$j];?></textarea></td>
+                        <td><textarea name="p[rules][]" rows="1" class="form-control" placeholder="校验规则"><?php echo (!isset($parameter['rules'][$j]))?"":$parameter['rules'][$j];?></textarea></td>
                         <td><button type="button" class="btn btn-danger" onclick="del(this)">删除</button></td>
                     </tr>
                 <?php } ?>

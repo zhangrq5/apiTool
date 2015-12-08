@@ -172,12 +172,43 @@ class Custom extends MY_Controller{
         $entry['custom_name'] = $this->input->post('custom_name');
         $entry['url_name'] = $this->input->post('url_name');
         $res = $this->custom_model->update_entry($entry, $custom_id);
+
         if($res != false) {
+            if ($custom_id === $this->session->userdata('custom_id')){
+                $session_data['custom_url'] = $entry['url_name'];
+                $this->session->set_userdata($session_data);
+            }            
             $this->show_custom_update($custom_id, "修改成功！", 'success');
             return;
         } else {
             $this->show_custom_update($custom_id, "修改失败！", 'danger');
             return;
+        }
+    }
+    function set_common_custom(){
+        if (!$this->session_valid()){
+            $info = "对不起，您没有权限访问该页面";
+            $info_type = 'danger';
+            $this->show_login($info, $info_type);
+            return;
+        }
+        $custom_id = $this->input->get('custom_id');
+        if ($custom_id == null){
+            $this->show_customs('更改失败', 'danger');
+        }else{
+            $custom_row = $this->custom_model->get_custom_row($custom_id);
+            $this->load->model('user_model');
+            $entry['custom_id'] = $custom_id;
+            $entry['custom_url'] = $custom_row->url_name;
+            $res = $this->user_model->update_entry($entry, $this->session->userdata('id'));
+            if($res != false) {
+                $this->session->set_userdata($entry);
+                $this->show_customs("修改成功！", 'success');
+                return;
+            } else {
+                $this->show_customs("修改失败！", 'danger');
+                return;
+            }             
         }
     }
 

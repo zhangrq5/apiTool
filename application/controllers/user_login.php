@@ -19,11 +19,15 @@ class User_login extends MY_Controller {
 			$res = $this->user_model->check_login($name, $password);
 
 			if ($res !== FALSE) {
+				$this->load->model('custom_model');
+
+				$custom_row = $this->custom_model->get_custom_row($res->custom_id);
 	 			$data = array(
 					'name'=>$res->name,
 					'logged_in'=>TRUE,
 					'id'=>$res->id,
-					'custom'=>$res->custom_id,
+					'custom_id'=>$res->custom_id,
+					'custom_url'=>$custom_row->url_name,
 					);
 	 			$this->session->set_userdata($data);
 				$this->show_main();

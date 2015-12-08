@@ -46,8 +46,8 @@
             ?>
             <div class="btn-group" style="float: right; margin-top: 8px">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                    <?php echo ($this->session->userdata('name') == null) ? '' : $this->session->userdata('name'); ?>
+                        aria-haspopup="true" aria-expanded="false" id ="configButton">
+                    <?php echo ($this->session->userdata('s') == null) ?$this->session->userdata('name'):''; ?>
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">

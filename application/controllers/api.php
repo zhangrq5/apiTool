@@ -59,6 +59,7 @@ class Api extends MY_Controller{
         $this->load->view(self::SIDEBAR, $side_data);
 
         $this->load->view(self::API_ADD, $data);
+        $this->load->view(self::FOOTER);
     }
     function show_api_es($cid = 0, $info = '', $info_type = ''){
         if ($cid == 0){

@@ -23,7 +23,6 @@
                 <table class="table table-bordered table-striped">
                   <thead>
                   <tr>
-                    <th>接口编号</th>
                     <th>接口名</th>
                     <th>路由名</th>
                     <th>所属类别</th>
@@ -37,8 +36,7 @@
                     foreach($new_api_es as $i) {
                   ?>
                     <tr>
-                      <td><?php echo $i->number;?></td>
-                      <td><?php echo $i->name;?></td>
+                      <td><a href="index.php?c=api&m=show_api_es&cid=<?=$i->category_id?>#info_api_<?=$i->number?>"><?php echo $i->name;?></td>
                       <td><?php echo $i->url_name;?></td>
                       <td><?php echo $i->category_name;?></td>
                       <td><?php echo $i->user_name;?></td>
@@ -63,13 +61,13 @@
             <a href="#widget2container" class="panel-heading" data-toggle="collapse">帮助</a>
             <div id="widget2container" class="panel-body collapse in">
               <p>
-                如果您在使用中遇到了问题，或发现的BUG，请及时联系那谁。
+                如果您在使用中遇到了问题，或发现的BUG，请及时联系。
               </p>
               <p>
-                联系邮箱：zhangrq@126.com
+                联系邮箱：
               </p>
               <p>
-                联系电话：400-820-8820
+                联系电话：
               </p>
               <p>
                 <a class="btn btn-primary">更多信息 »</a>

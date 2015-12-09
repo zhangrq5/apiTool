@@ -9,12 +9,6 @@
 
     </div>
     <div class="main-content">
-      <?php if(isset($info)) {  ?>
-          <div class="alert alert-<?php echo $info_type; ?>">
-              <button type="button" class="close" data-dismiss="alert">×</button>
-              <?php echo $info; ?>
-          </div>
-      <?php } ?>      
       <div class="panel panel-default">
         <a href="#page-stats" class="panel-heading" data-toggle="collapse">个人设置</a>
         <div id="page-stats" class="panel-collapse panel-body collapse in">
@@ -52,7 +46,7 @@
                       </td>
                       <td>
                       <a href = "index.php?c=custom&m=show_custom_update&custom_id=<?php echo $i->id?>">更新</a>
-                      <a href = "index.php?c=custom&m=show_custom_update&custom_id=<?php echo $i->id?>">删除</a>
+                      <a href = "index.php?c=custom&m=custom_delete&custom_id=<?php echo $i->id?>">删除</a>
                       </td>
                     </tr>
                   <?php

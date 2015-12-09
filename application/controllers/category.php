@@ -15,9 +15,10 @@ class Category extends MY_Controller{
         $this->load->model('category_model');
         $this->load->model('api_model');
     }
+
     function show_cate_add($cid = 0, $info = '', $info_type = ''){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
@@ -25,7 +26,6 @@ class Category extends MY_Controller{
         if($cid == null){
             $cid = $this->input->get('cid', 0);
         }
-
         $this->load->model('api_model');
         //获取导航栏分级
         // $nav_menu = $this->category_model->get_parents_by_id($cid);
@@ -38,6 +38,10 @@ class Category extends MY_Controller{
         $side_data['api_names'] = $api_names;
         $side_data['cid'] = $cid;
 
+        if($info != '' && ($info_type == 'success' || $info_type == 'danger')) {
+            $data['info'] = $info;
+            $data['info_type'] = $info_type;
+        }
         $data['name'] = $this->category_model->get_name_by_id($cid);
         $data['cid'] = $cid;
 
@@ -50,7 +54,7 @@ class Category extends MY_Controller{
     }
     function show_cate_update($cid = 0, $id = 0, $info='',$info_type = ''){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
@@ -61,7 +65,7 @@ class Category extends MY_Controller{
         if($id == null){
             $id = $this->input->get('id', 0);
         }
-        $this->load->model('category_model');
+
         //获取导航栏分级
         // $nav_menu = $this->category_model->get_parents_by_id($cid);
         //获取该分类下是否有其他分类，sidebar用
@@ -73,6 +77,10 @@ class Category extends MY_Controller{
         $side_data['api_names'] = $api_names;
         $side_data['cid'] = $cid;
 
+        if($info != '' && ($info_type == 'success' || $info_type == 'danger')) {
+            $data['info'] = $info;
+            $data['info_type'] = $info_type;
+        }
         $data['name'] = $this->category_model->get_name_by_id($cid);
         $data['cid'] = $cid;
         $data['cate_row'] = $this->category_model->get_category_object($id);
@@ -87,7 +95,7 @@ class Category extends MY_Controller{
     }
     function show_cate_sort($cid =0, $info='', $info_type = ''){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
@@ -95,7 +103,6 @@ class Category extends MY_Controller{
         if($cid == null){
             $cid = $this->input->get('cid', 0);
         }
-
         $this->load->model('api_model');
         //获取导航栏分级
         // $nav_menu = $this->category_model->get_parents_by_id($cid);
@@ -107,6 +114,11 @@ class Category extends MY_Controller{
         $side_data['child_menu'] = $child_menu;
         $side_data['api_names'] = $api_names;
         $side_data['cid'] = $cid;
+
+        if($info != '' && ($info_type == 'success' || $info_type == 'danger')) {
+            $data['info'] = $info;
+            $data['info_type'] = $info_type;
+        }
         $data['info'] = $info;
         $data['info_type'] = $info_type;
         $data['children'] = $this->category_model->get_categories_by_pid($cid);
@@ -119,12 +131,17 @@ class Category extends MY_Controller{
 
     function cate_add(){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
         }
         $cid = $this->input->get('cid', 0);
+
+        if (!$this->category_model->check_category_id($cid)){
+            $this->show_main('非法访问','danger');
+            return;
+        }
         // 表单验证，验证规则见 application/config/form_validation.php
         if ($this->form_validation->run('cate_add') == FALSE)
         {
@@ -148,21 +165,17 @@ class Category extends MY_Controller{
         }
     }
     function cate_update(){
-
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
         }
         $cid = $this->input->get('cid', 0);
         $id = $this->input->get('id', 0);
+
         // 表单验证，验证规则见 application/config/form_validation.php
-        if ($this->form_validation->run('cate_update') == FALSE)
-        {
-            $this->show_cate_update($cid, validation_errors(), 'danger');
-            return;
-        }
+
         $entry = array();
         $entry['name'] = $this->input->post('name');
         $entry['description'] = $this->input->post('description');
@@ -171,7 +184,7 @@ class Category extends MY_Controller{
         $entry['level'] = $this->category_model->get_level_by_id($parent_id) + 1;
         $update_id = $this->category_model->update_entry($entry, $id);
         if ($update_id !=false){
-            $this->show_cate_sort("更新成功！", 'success');
+            $this->show_cate_sort($cid, "更新成功！", 'success');
             return;
         }else{
             $this->show_cate_update($cid, '更新失败', 'danger');
@@ -180,12 +193,13 @@ class Category extends MY_Controller{
     }
     function cate_sort(){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
         }
         $cid = $this->input->get('cid', 0);
+
         $categories = $this->input->post('cate');
         $update_id = $this->category_model->update_ranks($categories);
         if ($update_id != true){
@@ -198,7 +212,7 @@ class Category extends MY_Controller{
     }
     function cate_delete(){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
@@ -208,7 +222,12 @@ class Category extends MY_Controller{
         if ($id == 0){
             $this->show_main('删除失败', 'danger');
             return;
-        }else{
+        }
+        if (!$this->category_model->check_category_id($id)){
+            $this->show_main('非法访问','danger');
+            return;
+        }
+        else{
             $update_id = $this->category_model->update_state_by_id($id, 0);
             if($update_id == false){
                 $this->show_main('删除失败', 'danger');

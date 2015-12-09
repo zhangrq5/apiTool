@@ -13,11 +13,12 @@ class Api extends MY_Controller{
         $this->load->library('session');
         $this->load->helper('subintercept');
         $this->load->model('api_model');
+        $this->load->model('category_model');
     }
 
     function show_api_add($cid = 0, $info = '', $info_type = ''){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
@@ -30,7 +31,10 @@ class Api extends MY_Controller{
             redirect(site_url('c=user_login&m=show_main'));
             return;
         }
-        $this->load->model('category_model');
+        if (!$this->category_model->check_category_id($cid)){
+            $this->show_main('非法访问','danger');
+            return;
+        }
         //获取导航栏分级
         // $nav_menu = $this->category_model->get_parents_by_id($cid);
         //获取该分类下是否有其他分类，sidebar用
@@ -59,7 +63,6 @@ class Api extends MY_Controller{
         $this->load->view(self::SIDEBAR, $side_data);
 
         $this->load->view(self::API_ADD, $data);
-        $this->load->view(self::FOOTER);
     }
     function show_api_es($cid = 0, $info = '', $info_type = ''){
         if ($cid == 0){
@@ -69,11 +72,14 @@ class Api extends MY_Controller{
             redirect(site_url('c=user_login&m=show_main'));
             return;
         }else{
+            if (!$this->category_model->check_category_id($cid)){
+                $this->show_main('非法访问','danger');
+                return;
+            }
             if($info != '' && ($info_type == 'success' || $info_type == 'danger')) {
                 $data['info'] = $info;
                 $data['info_type'] = $info_type;
             }
-            $this->load->model('category_model');
             //获取导航栏分级
             // $nav_menu = $this->category_model->get_parents_by_id($cid);
             //获取该分类下是否有其他分类，sidebar用
@@ -100,13 +106,17 @@ class Api extends MY_Controller{
 }
     function show_api_sort($cid =0, $info='', $info_type = ''){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
         }
         if($cid == null){
             $cid = $this->input->get('cid', 0);
+        }
+        if (!$this->category_model->check_category_id($cid)){
+            $this->show_main('非法访问','danger');
+            return;
         }
         $this->load->model('category_model');
         //获取导航栏分级
@@ -135,7 +145,7 @@ class Api extends MY_Controller{
     }
     function show_api_update($cid = 0, $aid = 0, $info='',$info_type = ''){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
@@ -149,8 +159,12 @@ class Api extends MY_Controller{
         if ($aid ==0){
             $this->show_api_es($cid);
             return;
-        }else{
-            $this->load->model('category_model');
+        }
+        if (!($this->category_model->check_category_id($cid) && $this->api_model->check_api_id($aid))){
+            $this->show_main('非法访问','danger');
+            return;
+        }
+        else{
             //获取导航栏分级
             // $nav_menu = $this->category_model->get_parents_by_id($cid);
             //获取该分类下是否有其他分类，sidebar用
@@ -173,7 +187,11 @@ class Api extends MY_Controller{
             $data['category_name'] = $category_name;
 
             $this->load->view(self::HEAD);
-            $this->load->view(self::NAVBAR);
+
+            $this->load->model('custom_model');
+            $admin_id = $this->session->userdata('id');
+            $nav_data['customs']  = $this->custom_model->get_customs($admin_id);
+            $this->load->view(self::NAVBAR, $nav_data);
 
             $this->load->view(self::SIDEBAR,$side_data);
 
@@ -182,12 +200,16 @@ class Api extends MY_Controller{
     }
     function api_add(){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
         }
         $cid = $this->input->get('cid', 0);
+        if (!$this->category_model->check_category_id($cid)){
+            $this->show_main('非法访问','danger');
+            return;
+        }
         $entry = array();
         $entry['number'] = $this->input->post('number');
         $entry['name'] = $this->input->post('name');
@@ -213,7 +235,7 @@ class Api extends MY_Controller{
     }
     function api_update(){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
@@ -221,7 +243,11 @@ class Api extends MY_Controller{
         $cid = $this->input->get('cid', 0);
         $aid = $this->input->post('aid', 0);
         if ($aid ==0){
-            $this->show_api_es($cid);
+            $this->show_api_es($cid, '非法访问', 'danger');
+            return;
+        }
+        if (!($this->category_model->check_category_id($cid) && $this->api_model->check_api_id($aid))){
+            $this->show_main('非法访问','danger');
             return;
         }
         $entry = array();
@@ -245,15 +271,19 @@ class Api extends MY_Controller{
     }
     function api_delete(){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
         }
         $cid = $this->input->get('cid', 0);
         $aid = $this->input->get('aid', 0);
+        if (!($this->category_model->check_category_id($cid) && $this->api_model->check_api_id($aid))){
+            $this->show_main('非法访问','danger');
+            return;
+        }
         if ($aid ==0){
-            $this->show_api_es($cid);
+            $this->show_api_es($cid, '非法访问', 'danger');
             return;
         }
         $res = $this->api_model->update_state_by_id($aid);
@@ -267,12 +297,16 @@ class Api extends MY_Controller{
     }
     function api_sort(){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面,请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
         }
         $cid = $this->input->get('cid', 0);
+        if (!$this->category_model->check_category_id($cid)){
+            $this->show_main('非法访问','danger');
+            return;
+        }
         $api_es = $this->input->post('api');
         $update_id = $this->api_model->update_ranks($api_es);
         if ($update_id != true){

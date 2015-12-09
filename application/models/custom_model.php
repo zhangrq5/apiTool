@@ -110,4 +110,5 @@ class Custom_Model extends CI_Model{
         else
             return false;
     }
+
 }

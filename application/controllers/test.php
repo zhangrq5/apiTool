@@ -47,6 +47,7 @@ class Test extends MY_Controller{
         ];
         $dr_url = $prefix."/debug/rule?uri=".$uri;
         $result = file_get_contents($dr_url, false);
+
         $info = json_decode($result, true);
         $param_array = [];
         if ($info['data'] !== null){
@@ -60,7 +61,11 @@ class Test extends MY_Controller{
                 if ($param['name'] === 'telephone'){
                     $param['rules'] .= '电话号码格式';
                 }else{
-                    $rule_arr = explode('|', $kv_arr[1]);
+                    if (isset($kv_arr[1])){
+                        $rule_arr = explode('|', $kv_arr[1]);
+                    }else{
+                        $rule_arr = array();
+                    }
                     foreach ($rule_arr as $j){
                         // echo $j."<br>";
                         if ($j === 'required'){
@@ -77,6 +82,13 @@ class Test extends MY_Controller{
             }
         }
         echo json_encode($param_array, true);
+    }
+    function test_result(){
+        $uri = $this->input->post('uri');
+        if ($uri == null){
+            echo "";
+        }
+
     }
 
 

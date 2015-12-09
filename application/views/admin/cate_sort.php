@@ -26,8 +26,9 @@
                       <thead>
                       <tr>
                           <th class="col-md-2">目录编号</th>
-                          <th class="col-md-9">目录名</th>
-                          <th class="col-md-1">操作</th>
+                          <th class="col-md-4">目录名</th>
+                          <th class="col-md-4">目录描述</th>
+                          <th class="col-md-2">操作</th>
                       </tr>
                       </thead>
                       <tbody>
@@ -36,7 +37,8 @@
                         ?>    
                             <tr>
                                 <td><input name="cate[]" type="hidden" value="<?php echo $i->id?>"><?php echo $i->id?></td>
-                                <td><?php echo $i->name?></td>
+                                <td><?php echo $i->name;?></td>
+                                <td><?php echo $i->description;?></td>
                                 <td>
                                     <span onclick="up(this)" style="color:red;cursor: pointer" class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
                                     &nbsp;

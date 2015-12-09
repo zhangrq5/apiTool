@@ -31,9 +31,9 @@
                   <div class="form-group">
                       <p>父目录：
                       </p>
-                      <select name="parent_id" id="parent_id" class="form-control" required="required" >
-                          <option value="1" selected="">分类二</option>
-                          <input type="hidden" value="1" name="parent_id">
+                      <select name="parent_id" id="parent_id" class="form-control" required="required" disabled="">
+                          <option value="<?php echo $cid?>" selected=""><?php echo $name?></option>
+                          <input type="hidden" value="<?php echo $cid?>" name="parent_id">
                       </select>
 
                   </div>

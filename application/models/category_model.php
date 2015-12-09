@@ -208,5 +208,14 @@ class Category_Model extends CI_Model {
  		$this->db->trans_commit();
  		return true;
  	}
-
+	function check_category_id($id){
+		$this->db->where(self::ID, $id);
+		$this->db->where(self::STATE, 1);
+		$this->db->from(self::TABLE_NAME);
+		$res = $this->db->get();
+		if($res->num_rows() > 0)
+			return true;
+		else
+			return false;
+	}
 }

@@ -18,7 +18,7 @@ class Custom extends MY_Controller{
     }
     function show_customs($info='', $info_type=''){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面，请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
@@ -55,7 +55,7 @@ class Custom extends MY_Controller{
     }
     function show_custom_add($info='', $info_type=''){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面，请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
@@ -97,17 +97,22 @@ class Custom extends MY_Controller{
             return;
         }
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面，请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
-        }else{
+        }
+        $user_id = $this->session->userdata('id');
+        if (!$this->user_model->check_custom_id($custom_id, $user_id)){
+            $this->show_main('非法访问', 'danger');
+            return;
+        }
+        else{
             $data = array();
             if($info != '' && ($info_type == 'success' || $info_type == 'danger')) {
                 $data['info'] = $info;
                 $data['info_type'] = $info_type;
             }
-            $id = $this->session->userdata('id');
             $data['custom_row'] = $this->custom_model->get_custom_row($custom_id);
 
 
@@ -136,7 +141,7 @@ class Custom extends MY_Controller{
     }
     function custom_add(){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面，请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
@@ -158,27 +163,26 @@ class Custom extends MY_Controller{
     }
     function custom_update(){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面，请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
         }
         $entry = array();
-        $entry['user_id'] = $this->session->userdata('id');
+        $user_id = $this->session->userdata('id');
+        $entry['user_id'] = $user_id;
         $custom_id = $this->input->post('custom_id');
-        if ($custom_id == 0){
-            redirect(site_url('c=user_login&m=show_main'));
+        if (!$this->custom_model->check_custom_id($custom_id, $user_id)){
+            $this->show_main('非法访问', 'danger');
+            return;
         }
+
         $entry['custom_name'] = $this->input->post('custom_name');
         $entry['url_name'] = $this->input->post('url_name');
         $res = $this->custom_model->update_entry($entry, $custom_id);
-
         if($res != false) {
-            if ($custom_id === $this->session->userdata('custom_id')){
-                $session_data['custom_url'] = $entry['url_name'];
-                $this->session->set_userdata($session_data);
-            }            
-            $this->show_custom_update($custom_id, "修改成功！", 'success');
+
+            $this->show_customs("修改成功！", 'success');
             return;
         } else {
             $this->show_custom_update($custom_id, "修改失败！", 'danger');
@@ -187,29 +191,31 @@ class Custom extends MY_Controller{
     }
     function set_common_custom(){
         if (!$this->session_valid()){
-            $info = "对不起，您没有权限访问该页面";
+            $info = "您没有权限访问该页面，请登录";
             $info_type = 'danger';
             $this->show_login($info, $info_type);
             return;
         }
+
         $custom_id = $this->input->get('custom_id');
-        if ($custom_id == null){
-            $this->show_customs('更改失败', 'danger');
-        }else{
-            $custom_row = $this->custom_model->get_custom_row($custom_id);
-            $this->load->model('user_model');
-            $entry['custom_id'] = $custom_id;
-            $entry['custom_url'] = $custom_row->url_name;
-            $res = $this->user_model->update_entry($entry, $this->session->userdata('id'));
-            if($res != false) {
-                $this->session->set_userdata($entry);
-                $this->show_customs("修改成功！", 'success');
-                return;
-            } else {
-                $this->show_customs("修改失败！", 'danger');
-                return;
-            }             
+        if ($custom_id == 0){
+            redirect(site_url('c=user_login&m=show_main'));
         }
+        $entry = array();
+        $user_id = $this->session->userdata('id');
+        $entry['custom_id'] = $custom_id;
+        $this->load->model('user_model');
+        $res = $this->user_model->update_entry($entry, $user_id);
+        if($res != false) {
+            $session_data['custom_id'] = $custom_id;
+            $this->session->set_userdata($session_data);
+            $this->show_customs("修改成功！", 'success');
+            return;
+        } else {
+            $this->show_customs("修改失败！", 'danger');
+            return;
+        }
+
     }
 
 

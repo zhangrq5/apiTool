@@ -1,7 +1,7 @@
 <div class="sidebar-nav" style="position:fixed;height:100%;">
   <div id="sidebar" style="position:relative;background:#f5f5f5;padding:10px;height:100%;border-right:#ddd 1px solid;overflow-y:auto;">
     <div class="form-group">
-      <input type="text" class="form-control" id="search_api" placeholder="search here" onkeyup="search('api',this)">
+      <input type="text" class="form-control" id="search_api" placeholder="search here" onkeyup="">
     </div>
     <div class = "form-group">
       <form action="<?php echo site_url('c=category&m=show_cate_add');?>" method="get">

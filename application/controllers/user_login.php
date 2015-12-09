@@ -13,27 +13,29 @@ class User_login extends MY_Controller {
 			$this->show_login('缺少用户名或密码！', 'danger');
 		} else {
 			$name = $this->input->post('name');
-			$password = $this->input->post('password');
+
+			$pwd  = $this->input->post('password');
+			$password = md5($pwd);
 			$this->load->model('user_model');
 
 			$res = $this->user_model->check_login($name, $password);
 
 			if ($res !== FALSE) {
 				$this->load->model('custom_model');
-
 				$custom_row = $this->custom_model->get_custom_row($res->custom_id);
+				if($custom_row == null){
+					$custom_id = 0;
+				}else{
+					$custom_id = $custom_row->id;
+				}
 	 			$data = array(
 					'name'=>$res->name,
 					'logged_in'=>TRUE,
 					'id'=>$res->id,
-					'custom_id'=>$res->custom_id,
-					'custom_url'=>$custom_row->url_name,
+					'custom_id'=>$custom_id,
 					);
 	 			$this->session->set_userdata($data);
 				$this->show_main();
-			} 
-			else if($res !== FALSE && $res->state == 0) {
-				$this->show_login('该用户已被冻结！请联系系统管理员。', 'danger');
 			}
 			else
 			{

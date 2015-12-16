@@ -105,21 +105,21 @@
             $('#parameter').append($html);
         }
         function del(obj){
-            $(obj).parents('tr').remove();
+            // $(obj).parents('tr').remove();
+            var p_data = $("input").serialize();
+            console.log(p_data);
         }
-        /*function test(){
+        function test(){
             var count = $("#param_table").find("tr").length;
             var dr_url = document.getElementById("url_name").value;
             var prefix = document.getElementById("prefix").value;
-            var $html = '<form id="test_form" method="post"> \
-                    <div class="form-group"> \
+            var $html = '<form id="test_form" method="post" onsubmit="return false"> \
                         <input type="hidden" id="prefix" value="'+prefix+'"> \
                         <input type="hidden" id="url_name" value="'+dr_url+'"> \
-                        <div class="input-group" id="input_form"> \
                     ';
             for (var i=1;i<count;i++){
-                $html += '                    <div class="form-group"> \
-                    <div class="input-group" id="input_form">';
+                // $html += '                    <div class="form-group"> \
+                //     <div class="input-group" id="input_form">';
                 var p_name = $("#param_table").find("tr").eq(i).find("td").eq(0).find("input").eq(0).val();
                 var isNeed = $('select[name="p[type][]"]').eq(i-1).val();
                 var req = "";
@@ -127,15 +127,15 @@
                     req = ' required="required" ';
                 }
                 $html += '<input type="text" id="'+p_name+'" placeholder ="'+p_name+ '"' +req+'><br>';
-                $html += '                          </div> \
-                </div> ';
+/*                $html += '                          </div> \
+                </div> ';*/
             }
-                $html +='<button class="btn btn-success btn-xs" onclick="postman()">Submit</button> \
-                </form>';
+            $html +='<button class="btn btn-success btn-xs" onclick="postman()">Submit</button> \
+            </form>';
                           
             $('#inline2').html($html);
-        }*/
-        /*function postman(){
+        }
+        function postman(){
             $('#test_form').submit(function(){
                 var str_data=$("#test_form input").map(function(){
                     return ($(this).attr("id")+'='+$(this).val());
@@ -144,24 +144,17 @@
                     url: "index.php?c=test&m=get_test_result",
                     "contentType": "application/x-www-form-urlencoded; charset=utf-8",
                     data:str_data,
-
                     type: 'POST',
                     dataType: 'text',
                     success: function(d){
                         if (d != null){
-                            $('#res').value = d;
-//                            alert(str_data);
-                            alert(d);
+                            $('#test_res').html(d);
+                            parent.$.fancybox.close();                            
                         }
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert(XMLHttpRequest.status);
-                        alert(XMLHttpRequest.readyState);
-                        alert(textStatus);
-                    }
+                    },                    
                 });
             });
-        }*/
+        }
     </script>
     <script type="text/javascript">
     $(function(){
@@ -263,8 +256,8 @@
             </div>
             <div class="form-group">
               <h5>测试结果</h5>
-<!--              <p><a id="modal" href="#inline2" onclick="test()">点击这里</a>加载一个模式窗口</p>-->
-              <textarea name="res" id="res" rows="3" class="form-control" placeholder="返回结果"></textarea>
+              <p><a id="modal" href="#inline2" onclick="test()">点击这里</a>加载一个模式窗口</p>
+              <textarea name="res" id="test_res" rows="3" class="form-control" placeholder="返回结果" ></textarea>
             </div>
             <div class="form-group">
               <h5>备注</h5>

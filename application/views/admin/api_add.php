@@ -5,9 +5,15 @@
         <li>
           <a href="<?php echo base_url(); ?>">主页</a>
         </li>
+        <?php
+        for ($i = count($nav_menu)-1;$i>=0;$i--){
+        ?>
         <li>
-          <a href="<?php echo site_url('c=coupon&m=show_coupons'); ?>">所在目录</a>
+          <a href="index.php?c=api&m=show_api_es&cid=<?=$nav_menu[$i]['id']?>"><?=$nav_menu[$i]['name']?></a>
         </li>
+        <?php  
+        }
+        ?>
         <li class="active">新增接口</li>
       </ul>
     </div>
@@ -114,8 +120,12 @@
             var dr_url = document.getElementById("url_name").value;
             var prefix = document.getElementById("prefix").value;
             var $html = '<form class="form-horizontal" role="form" id="test_form" method="post" onsubmit="return false"> \
-                        <input type="hidden" id="prefix" value="'+prefix+'"> \
-                        <input type="hidden" id="url_name" value="'+dr_url+'"> \
+                        <div class="form-group"> \
+                            <label class="col-sm-2 control-label">URL</label> \
+                            <div class="col-sm-9"> \
+                            <input type="text" class="form-control" id="test_api_url" required="required" value="'+prefix+dr_url+'">  \
+                            </div> \
+                        </div> \
                     ';
             for (var i=1;i<count;i++){
                 var p_name = $("#param_table").find("tr").eq(i).find("td").eq(0).find("input").eq(0).val();
@@ -134,8 +144,8 @@
 
             }
             $html +='   <div class="form-group"> \
-                            <div class="col-sm-offset-2 col-sm-10"> \
-                                <button type="submit" class="btn btn-success btn-xs" onclick="postman()">登录</button> \
+                            <div class="col-sm-offset-2 col-sm-9"> \
+                                <button type="submit" class="btn btn-success" onclick="postman()">登录</button> \
                             </div> \
                         </div> \
                     </form>';             
@@ -150,13 +160,13 @@
                             <input type="hidden" id="url_name" value="'+dr_url+'"> \
                             <div class="form-group"> \
                               <label class="col-sm-2 control-label">token</label> \
-                              <div class="col-sm-10"> \
+                              <div class="col-sm-8"> \
                                  <input type="text" class="form-control" id="firstname">  \
                               </div> \
                             </div> \
                             <div class="form-group"> \
                               <label class="col-sm-2 control-label">姓</label> \
-                              <div class="col-sm-10"> \
+                              <div class="col-sm-8"> \
                                  <input type="text" class="form-control" id="lastname">  \
                               </div> \
                             </div>';
@@ -192,7 +202,7 @@
     <script type="text/javascript">
     $(function(){
         $("#modal").fancybox({
-            'width': 700,
+            'minWidth': 500,
             'modal':false,           
             'overlayShow':true,
             'hideOnOverlayClick':false,
